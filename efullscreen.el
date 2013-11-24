@@ -1,11 +1,11 @@
-;;; efullscreen.el -- 
+;;; efullscreen.el -- Advice commands to execute fullscreen, restoring the window setup when exiting.
 
 ;; Copyright (C) 2013 Tom Regner
 
 ;; Author: Tom Regner <tom@goochesa.de>
 ;; Maintainer: Tom Regner <tom@goochesa.de>
 ;; Version: 0.0.1
-;; Keywords: fullscreen, frame, register
+;; Keywords: fullscreen
 
 ;;  This file is NOT part of GNU Emacs
 
@@ -28,20 +28,23 @@
 ;; as to use in personal emacs configurations to attain the same goal
 ;; for packages that don't use efullscreen themself.
 ;;
-;; Examples:
+;; Example:
 ;; - Open magit-status in a single window in fullscreen
-;;
+;;   (require 'efullscreen)
 ;;   (efullscreen magit-status magit-quit :magit-fullscreen t)
-;;
 ;; 
-;; 
-;; Code:
+;;; Code:
 
 ;; customization
+;; - none
+
 ;; variables 
-(defvar efull/rule-no 1)
+(defvar efull/rule-no 1
+  "Used to generate unique advice names that are traceable to
+  this module.")
 
 ;; internal functions
+;; - none
 
 ;; API
 (defmacro efullscreen (command-on command-off register &optional kill-on-coff)
@@ -62,7 +65,8 @@
 		(jump-to-register ,register)))
 	(setq efull/rule-no (+ efull/rule-no 1))))
 
-
 ;; interactive functions
+;; - none
 
-;;; repl-toggle.el ends here
+(provide 'efullscreen)
+;;; efullscreen.el ends here
