@@ -10,5 +10,5 @@ for packages that don't use =efullscreen= themself.
 
 #+BEGIN_SRC emacs-lisp
    (require 'efullscreen)
-   (efullscreen magit-status magit-mode-quit-window :magit-fullscreen t)
+   (efullscreen magit-status magit-mode-quit-window :magit-fullscreen nil)
 #+END_SRC
