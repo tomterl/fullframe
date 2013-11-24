@@ -31,7 +31,7 @@
 ;; Example:
 ;; - Open magit-status in a single window in fullscreen
 ;;   (require 'efullscreen)
-;;   (efullscreen magit-status magit-quit :magit-fullscreen t)
+;;   (efullscreen magit-status magit-mode-quit-window :magit-fullscreen t)
 ;; 
 ;;; Code:
 
