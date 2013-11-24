@@ -1,4 +1,4 @@
-;;; efullscreen.el -- Advice commands to execute fullscreen, restoring the window setup when exiting.
+;;; efullscreen.el --- Advice commands to execute fullscreen, restoring the window setup when exiting.
 
 ;; Copyright (C) 2013 Tom Regner
 
@@ -47,6 +47,7 @@
 ;; - none
 
 ;; API
+;;;###autoload
 (defmacro efullscreen (command-on command-off register &optional kill-on-coff)
   "Advice execution of COMMAND-ON to store the current window
   state in REGISTER and go to fullscreen. Advice COMMAND-OFF to
