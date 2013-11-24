@@ -9,6 +9,6 @@ for packages that don't use =efullscreen= themself.
  Open =magit-status= in a single window in fullscreen
 
 #+BEGIN_SRC emacs-lisp
-   (require 'efullscreen)
-   (efullscreen magit-status magit-mode-quit-window :magit-fullscreen nil)
+  (require 'efullscreen)
+  (efullscreen magit-status magit-mode-quit-window :magit-fullscreen nil)
 #+END_SRC
