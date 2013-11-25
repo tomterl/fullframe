@@ -1,4 +1,4 @@
-;;; efullscreen.el --- Advice commands to execute fullscreen, restoring the window setup when exiting.
+;;; fullframe.el --- Advice commands to execute fullscreen, restoring the window setup when exiting.
 
 ;; Copyright (C) 2013 Tom Regner
 
@@ -26,12 +26,12 @@
 ;; This is a library that package developers can use to provide user
 ;; friendly fullscreen execution of buffer exposing commands, as well
 ;; as to use in personal emacs configurations to attain the same goal
-;; for packages that don't use efullscreen themself.
+;; for packages that don't use fullframe themself.
 ;;
 ;; Example:
 ;; - Open magit-status in a single window in fullscreen
-;;   (require 'efullscreen)
-;;   (efullscreen magit-status magit-mode-quit-window :magit-fullscreen nil)
+;;   (require 'fullframe)
+;;   (fullframe magit-status magit-mode-quit-window :magit-fullscreen nil)
 ;; 
 ;;; Code:
 
@@ -48,9 +48,9 @@
 
 ;; API
 ;;;###autoload
-(defmacro efullscreen (command-on command-off register &optional kill-on-coff)
+(defmacro fullframe (command-on command-off register &optional kill-on-coff)
   "Advice execution of COMMAND-ON to store the current window
-  state in REGISTER and go to fullscreen. Advice COMMAND-OFF to
+  state in REGISTER and display a single frame. Advice COMMAND-OFF to
   restore the state stored in REGISTER. If KILL-ON-COFF is true,
   kill-buffer is called on command-off."
   `(progn
@@ -78,5 +78,5 @@
 ;; interactive functions
 ;; - none
 
-(provide 'efullscreen)
-;;; efullscreen.el ends here
+(provide 'fullframe)
+;;; fullframe.el ends here

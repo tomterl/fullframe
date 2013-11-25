@@ -1,14 +1,15 @@
 * Generalized automatic execution at fullscreen 
 
 This is a library that package developers can use to provide user
-friendly fullscreen execution of buffer exposing commands, as well
-as to use in personal emacs configurations to attain the same goal
-for packages that don't use =efullscreen= themself.
+friendly fullscreen (that is full frame in emacs terminology)
+execution of buffer exposing commands, as well as to use in personal
+emacs configurations to attain the same goal for packages that don't
+use =fullframe= or the likes of it themself.
 
  Example:
  Open =magit-status= in a single window in fullscreen
 
 #+BEGIN_SRC emacs-lisp
-  (require 'efullscreen)
-  (efullscreen magit-status magit-mode-quit-window :magit-fullscreen nil)
+  (require 'fullframe)
+  (fullframe magit-status magit-mode-quit-window :magit-fullframe nil)
 #+END_SRC
