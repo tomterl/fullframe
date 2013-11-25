@@ -1,4 +1,4 @@
-;;; fullframe.el --- Advice commands to execute fullscreen, restoring the window setup when exiting.
+;;; fullframe.el --- Generalized automatic execution in a single frame
 
 ;; Copyright (C) 2013 Tom Regner
 
@@ -23,11 +23,16 @@
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; This is a library that package developers can use to provide user
-;; friendly fullscreen execution of buffer exposing commands, as well
-;; as to use in personal emacs configurations to attain the same goal
-;; for packages that don't use fullframe themself.
+;; Generalized automatic execution in a single frame
 ;;
+;; This is a library that package developers can use to provide user
+;; friendly single window per frame execution of buffer exposing
+;; commands, as well as to use in personal emacs configurations to attain
+;; the same goal for packages that don't use =fullframe= or the likes of
+;; it themself.
+;;
+;;  Example: Setup =magit-status= to open in one window in the current
+;;  frame when called
 ;; Example:
 ;; - Open magit-status in a single window in fullscreen
 ;;   (require 'fullframe)

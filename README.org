@@ -1,12 +1,13 @@
 * Generalized automatic execution in a single frame
 
 This is a library that package developers can use to provide user
-friendly single frame execution of buffer exposing commands, as well
-as to use in personal emacs configurations to attain the same goal for
-packages that don't use =fullframe= or the likes of it themself.
+friendly single window per frame execution of buffer exposing
+commands, as well as to use in personal emacs configurations to attain
+the same goal for packages that don't use =fullframe= or the likes of
+it themself.
 
- Example:
- Open =magit-status= in a single window in fullscreen
+ Example: Setup =magit-status= to open in one window in the current
+ frame when called:
 
 #+BEGIN_SRC emacs-lisp
   (require 'fullframe)
