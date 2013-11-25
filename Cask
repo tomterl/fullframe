@@ -1,6 +1,6 @@
 (source melpa)
 
-(package "fullframe" "0.0.1" "Advice commands to execute in a single frame, restoring the window setup when exiting.")
+(package-file "fullframe.el")
 
 (development
  (depends-on "ecukes")
