@@ -4,7 +4,7 @@
 
 ;; Author: Tom Regner <tom@goochesa.de>
 ;; Maintainer: Tom Regner <tom@goochesa.de>
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Keywords: fullscreen
 
 ;;  This file is NOT part of GNU Emacs
