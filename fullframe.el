@@ -37,16 +37,14 @@
 ;; - Open magit-status in a single window in fullscreen
 ;;   (require 'fullframe)
 ;;   (fullframe magit-status magit-mode-quit-window :magit-fullscreen nil)
-;; 
+;;
 ;;; Code:
 
 ;; customization
 ;; - none
 
-;; variables 
-(defvar efull/rule-no 1
-  "Used to generate unique advice names that are traceable to
-  this module.")
+;; variables
+;; - none
 
 ;; internal functions
 ;; - none
@@ -58,27 +56,20 @@
   state in REGISTER and display a single frame. Advice COMMAND-OFF to
   restore the state stored in REGISTER. If KILL-ON-COFF is true,
   kill-buffer is called on command-off."
-  `(progn
-     (defadvice ,command-on (around
-                             ,(make-symbol
-                               (concat "fullscreen-rule-" (number-to-string efull/rule-no)))
-                             activate)
-       (window-configuration-to-register ,register)
-       ad-do-it
-       (delete-other-windows))
-     (if ,kill-on-coff
-         (defadvice ,command-off (after
-                                  ,(make-symbol
-                                    (concat "restore-setup-rule-" (number-to-string efull/rule-no)))
-                                  activate)
-           (kill-buffer)
-           (jump-to-register ,register))
-       (defadvice ,command-off (after
-                                ,(make-symbol
-                                  (concat "restore-setup-rule-" (number-to-string efull/rule-no)))
-                                activate)
-         (jump-to-register ,register)))
-     (setq efull/rule-no (+ efull/rule-no 1))))
+  (let ((on-rule-name (gensym "fullscreen-rule-"))
+        (off-rule-name (gensym "restore-setup-rule-"))
+        (off-code (if kill-on-coff
+                      `(progn
+                         (kill-buffer)
+                         (jump-to-register ,register))
+                    `(jump-to-register ,register))))
+    `(progn
+       (defadvice ,command-on (around ,on-rule-name activate)
+         (window-configuration-to-register ,register)
+         ad-do-it
+         (delete-other-windows))
+       (defadvice ,command-off (after ,off-rule-name activate)
+         ,off-code))))
 
 ;; interactive functions
 ;; - none
