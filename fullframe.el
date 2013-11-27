@@ -56,16 +56,17 @@
   state in REGISTER and display a single frame. Advice COMMAND-OFF to
   restore the state stored in REGISTER. If KILL-ON-COFF is true,
   kill-buffer is called on command-off."
-  (let ((on-rule-name (gensym "fullscreen-rule-"))
-        (off-rule-name (gensym "restore-setup-rule-"))
-        (off-code (if kill-on-coff
-                      `(progn
-                         (kill-buffer)
-                         (jump-to-register ,register))
-                    `(jump-to-register ,register))))
-    `(progn
+  (let* ((on-rule-name (gensym "fullscreen-rule-"))
+         (off-rule-name (gensym "restore-setup-rule-"))
+         (register-name (gensym))
+         (off-code (if kill-on-coff
+                       `(progn
+                          (kill-buffer)
+                          (jump-to-register ,register-name))
+                     `(jump-to-register ,register-name))))
+    `(let ((,register-name ,register))
        (defadvice ,command-on (around ,on-rule-name activate)
-         (window-configuration-to-register ,register)
+         (window-configuration-to-register ,register-name)
          ad-do-it
          (delete-other-windows))
        (defadvice ,command-off (after ,off-rule-name activate)
