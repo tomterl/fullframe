@@ -40,6 +40,8 @@
 ;;
 ;;; Code:
 
+(eval-when-compile (require 'cl))
+
 ;; customization
 ;; - none
 
@@ -76,4 +78,9 @@
 ;; - none
 
 (provide 'fullframe)
+
+;; Local Variables:
+;; byte-compile-warnings: (not cl-functions)
+;; End:
+
 ;;; fullframe.el ends here
