@@ -4,7 +4,7 @@
 
 ;; Author: Tom Regner <tom@goochesa.de>
 ;; Maintainer: Tom Regner <tom@goochesa.de>
-;; Version: 0.0.2
+;; Version: 0.0.3
 ;; Keywords: fullscreen
 
 ;;  This file is NOT part of GNU Emacs
@@ -60,7 +60,7 @@
   kill-buffer is called on command-off."
   (let* ((on-rule-name (cl-gensym "fullscreen-rule-"))
          (off-rule-name (cl-gensym "restore-setup-rule-"))
-         (register-name (cl-gensym "register-sym"))
+         (register-name (cl-gensym "register-symbol-"))
          (off-code (if kill-on-coff
                        `(progn
                           (kill-buffer)
