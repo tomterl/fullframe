@@ -60,13 +60,14 @@
   kill-buffer is called on command-off."
   (let* ((on-rule-name (cl-gensym "fullscreen-rule-"))
          (off-rule-name (cl-gensym "restore-setup-rule-"))
-         (register-name (cl-gensym))
+         (register-name (cl-gensym "register-sym"))
          (off-code (if kill-on-coff
                        `(progn
                           (kill-buffer)
                           (jump-to-register ,register-name))
                      `(jump-to-register ,register-name))))
-    `(let ((,register-name ,register))
+    `(progn
+	   (setq ,register-name ,register)
        (defadvice ,command-on (around ,on-rule-name activate)
          (window-configuration-to-register ,register-name)
          ad-do-it
