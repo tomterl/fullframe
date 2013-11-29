@@ -40,6 +40,8 @@
 ;;
 ;;; Code:
 
+(require 'cl-lib)
+
 ;; customization
 ;; - none
 
@@ -56,9 +58,9 @@
   state in REGISTER and display a single frame. Advice COMMAND-OFF to
   restore the state stored in REGISTER. If KILL-ON-COFF is true,
   kill-buffer is called on command-off."
-  (let* ((on-rule-name (gensym "fullscreen-rule-"))
-         (off-rule-name (gensym "restore-setup-rule-"))
-         (register-name (gensym))
+  (let* ((on-rule-name (cl-gensym "fullscreen-rule-"))
+         (off-rule-name (cl-gensym "restore-setup-rule-"))
+         (register-name (cl-gensym))
          (off-code (if kill-on-coff
                        `(progn
                           (kill-buffer)
