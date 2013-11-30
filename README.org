@@ -6,10 +6,47 @@ commands, as well as to use in personal emacs configurations to attain
 the same goal for packages that don't use =fullframe= or the likes of
 it themself.
 
- Example: Setup =magit-status= to open in one window in the current
- frame when called:
+Example: Setup =magit-status= to open in one window in the current
+frame when called:
 
 #+BEGIN_SRC emacs-lisp
   (require 'fullframe)
   (fullframe magit-status magit-mode-quit-window :magit-fullframe nil)
 #+END_SRC
+
+** API
+
+Fullframe exposes one function, =fullframe=
+
+#+BEGIN_SRC emacs-lisp
+    (fullframe enter-command
+               exit-command
+               layout-storage-name
+               &optional kill-buffer-after-exit-command)
+#+END_SRC
+
+- =enter-command= is the function you want to execute in a single window in the current frame.
+- =exit-command= is the function that is used to end the action.
+- =layout-storage-name= is the register to store the window layout in
+  as it is before =enter-command= is called
+- =kill-buffer-after-exit-command= can be set to true if
+  =exit-comamnd= does not kill the buffer =enter-command= created, and
+  you want that buffer gone.
+
+** Installation
+
+=fullframe= is available on [[http://melpa.milkbox.net/#/fullframe][melpa]]. [[http://melpa.milkbox.net/#/getting-started][Add melpa to your package sources]],
+then execute the following in emacs:
+
+#+BEGIN_SRC emacs-lisp
+  M-x package-install<CR> fullframe<CR>
+#+END_SRC
+
+If you use =cask= for your package-managment, make sure you have
+=(source 'melpa)= in your =Cask= file and add
+
+#+BEGIN_SRC emacs-lisp
+  (depends-on "fullframe")
+#+END_SRC 
+
+to it.
