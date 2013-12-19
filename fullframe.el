@@ -46,7 +46,10 @@
 ;; - none
 
 ;; variables
-;; - none
+(defvar fullframe/--after-advice nil
+  "Not 'nil in a buffer created by an adviced function.")
+(make-variable-buffer-local 'fullframe/--after-advice)
+
 
 ;; internal functions
 ;; - none
@@ -67,11 +70,14 @@
                           (jump-to-register ,register-name))
                      `(jump-to-register ,register-name))))
     `(progn
-	   (setq ,register-name ,register)
+       (setq ,register-name ,register)
        (defadvice ,command-on (around ,on-rule-name activate)
-         (window-configuration-to-register ,register-name)
-         ad-do-it
-         (delete-other-windows))
+         (if (not fullframe/--after-advice)
+             (progn
+               (window-configuration-to-register ,register-name)
+               ad-do-it
+               (delete-other-windows)
+               (setq fullframe/--after-advice t))))
        (defadvice ,command-off (after ,off-rule-name activate)
          ,off-code))))
 
