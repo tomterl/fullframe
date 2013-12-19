@@ -27,7 +27,7 @@
 ;;
 ;; This is a library that package developers can use to provide user
 ;; friendly single window per frame execution of buffer exposing
-;; commands, as well as to use in personal emacs configurations to attain
+;; commands, as well as to use in personal Emacs configurations to attain
 ;; the same goal for packages that don't use =fullframe= or the likes of
 ;; it themself.
 ;;
@@ -57,10 +57,13 @@
 ;; API
 ;;;###autoload
 (defmacro fullframe (command-on command-off register &optional kill-on-coff)
-  "Advice execution of COMMAND-ON to store the current window
-  state in REGISTER and display a single frame. Advice COMMAND-OFF to
-  restore the state stored in REGISTER. If KILL-ON-COFF is true,
-  kill-buffer is called on command-off."
+  "Save window/frame state when executing COMMAND-ON.
+
+Advice execution of command-on to store the current window until
+  COMMAND-OFF state in REGISTER and display a single
+  frame.  Advice COMMAND-OFF to restore the state stored in
+  REGISTER.  If KILL-ON-COFF is true, `kill-buffer' is called on
+  command-off."
   (let* ((on-rule-name (cl-gensym "fullscreen-rule-"))
          (off-rule-name (cl-gensym "restore-setup-rule-"))
          (register-name (cl-gensym "register-symbol-"))
