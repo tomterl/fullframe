@@ -62,7 +62,7 @@
 Advice execution of command-on to store the current window until
   COMMAND-OFF state in REGISTER and display a single
   frame.  Advice COMMAND-OFF to restore the state stored in
-  REGISTER.  If KILL-ON-COFF is true, `kill-buffer' is called on
+  REGISTER.  If KILL-ON-COFF is true, `kill-buffer' is called after
   command-off."
   (let* ((on-rule-name (cl-gensym "fullscreen-rule-"))
          (off-rule-name (cl-gensym "restore-setup-rule-"))
