@@ -50,39 +50,48 @@
   "Not 'nil in a buffer created by an adviced function.")
 (make-variable-buffer-local 'fullframe/--after-advice)
 
-
 ;; internal functions
 ;; - none
 
 ;; API
 ;;;###autoload
-(defmacro fullframe (command-on command-off register &optional kill-on-coff)
+(defmacro fullframe (command-on command-off register &optional kill-on-coff same-buffer)
   "Save window/frame state when executing COMMAND-ON.
 
 Advice execution of command-on to store the current window until
-  COMMAND-OFF state in REGISTER and display a single
-  frame.  Advice COMMAND-OFF to restore the state stored in
-  REGISTER.  If KILL-ON-COFF is true, `kill-buffer' is called after
-  command-off."
+  COMMAND-OFF state in REGISTER and display a single frame.
+  Advice COMMAND-OFF to restore the state stored in REGISTER.  If
+  KILL-ON-COFF is true, `kill-buffer' is called after
+  command-off.  When SAME-BUFFER is non-nil, the window
+  configuration will only be restored if COMMAND-OFF is called in
+  the same buffer that was current after COMMAND-ON completed."
   (let* ((on-rule-name (cl-gensym "fullscreen-rule-"))
          (off-rule-name (cl-gensym "restore-setup-rule-"))
          (register-name (cl-gensym "register-symbol-"))
+         (allow-unwind-var (cl-gensym "fullscreen-allow-unwind-"))
+         (should-unwind-name (cl-gensym "unwind-"))
          (off-code (if kill-on-coff
                        `(progn
                           (kill-buffer)
                           (jump-to-register ,register-name))
                      `(jump-to-register ,register-name))))
     `(progn
+       (defvar ,allow-unwind-var (not ,same-buffer))
+       (make-variable-buffer-local ',allow-unwind-var)
        (setq ,register-name ,register)
        (defadvice ,command-on (around ,on-rule-name activate)
-         (if (not fullframe/--after-advice)
-             (progn
-               (window-configuration-to-register ,register-name)
+         (when (not fullframe/--after-advice)
+           (window-configuration-to-register ,register-name)
+           ad-do-it
+           (setq ,allow-unwind-var t)
+           (delete-other-windows)
+           (setq fullframe/--after-advice t)))
+       (defadvice ,command-off (around ,off-rule-name activate)
+         (let ((,should-unwind-name ,allow-unwind-var))
+           (prog1
                ad-do-it
-               (delete-other-windows)
-               (setq fullframe/--after-advice t))))
-       (defadvice ,command-off (after ,off-rule-name activate)
-         ,off-code))))
+             (when ,should-unwind-name
+               ,off-code)))))))
 
 ;; interactive functions
 ;; - none
