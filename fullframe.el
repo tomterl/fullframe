@@ -75,7 +75,9 @@ Advice execution of command-on to store the current window until
                        `(progn
                           (kill-buffer)
                           (jump-to-register ,register-name))
-                     `(jump-to-register ,register-name))))
+                     `(condition-case nil
+                          (jump-to-register ,register-name)
+                        (error (message "Failed to restore all windows."))))))
     `(progn
        (defvar ,allow-unwind-var ,any-buffer)
        (make-variable-buffer-local ',allow-unwind-var)
