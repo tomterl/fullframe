@@ -46,55 +46,46 @@
 ;; - none
 
 ;; variables
-(defvar fullframe/--after-advice nil
-  "Not 'nil in a buffer created by an adviced function.")
-(make-variable-buffer-local 'fullframe/--after-advice)
+(defvar fullframe/previous-window-configuration nil
+  "The window configuration to restore.")
+(make-variable-buffer-local 'fullframe/previous-window-configuration)
 
 ;; internal functions
-;; - none
+
+(defun fullframe/maybe-restore-configuration (config)
+  "Restore CONFIG if non-nil."
+  (when config
+    (condition-case nil
+        (set-window-configuration config)
+      (error (message "Failed to restore all windows.")))))
 
 ;; API
 ;;;###autoload
-(defmacro fullframe (command-on command-off register &optional kill-on-coff any-buffer)
+(defmacro fullframe (command-on command-off &optional kill-on-coff ignored)
   "Save window/frame state when executing COMMAND-ON.
 
-Advice execution of command-on to store the current window until
-  COMMAND-OFF state in REGISTER and display a single frame.
-  Advice COMMAND-OFF to restore the state stored in REGISTER.  If
-  KILL-ON-COFF is true, `kill-buffer' is called after
-  command-off.  Unless ANY-BUFFER is non-nil (the default), the
-  window configuration will be restored only if COMMAND-OFF is
-  called in the same buffer that was current after COMMAND-ON
-  completed."
-  (let* ((on-rule-name (cl-gensym "fullscreen-rule-"))
-         (off-rule-name (cl-gensym "restore-setup-rule-"))
-         (register-name (cl-gensym "register-symbol-"))
-         (allow-unwind-var (cl-gensym "fullscreen-allow-unwind-"))
-         (should-unwind-name (cl-gensym "unwind-"))
-         (off-code (if kill-on-coff
-                       `(progn
-                          (kill-buffer)
-                          (jump-to-register ,register-name))
-                     `(condition-case nil
-                          (jump-to-register ,register-name)
-                        (error (message "Failed to restore all windows."))))))
+Advises COMMAND-ON so that the buffer it displays will appear in
+a full-frame window.  The previous window configuration will be
+restored when COMMAND-OFF is executed in that buffer.  If
+KILL-ON-COFF is non-nil, then the buffer will also be killed
+after COMMAND-OFF has completed."
+  (when (keywordp kill-on-coff)
+    (error "The register parameter for fullframe has been removed"))
+  (let* ((window-config (cl-gensym "fullframe-config-"))
+         (buf (cl-gensym "fullframe-buf-")))
     `(progn
-       (defvar ,allow-unwind-var ,any-buffer)
-       (make-variable-buffer-local ',allow-unwind-var)
-       (setq ,register-name ,register)
-       (defadvice ,command-on (around ,on-rule-name activate)
-         (when (not fullframe/--after-advice)
-           (window-configuration-to-register ,register-name)
+       (defadvice ,command-on (around fullframe activate)
+         (let ((,window-config (current-window-configuration)))
            ad-do-it
-           (setq ,allow-unwind-var t)
            (delete-other-windows)
-           (setq fullframe/--after-advice t)))
-       (defadvice ,command-off (around ,off-rule-name activate)
-         (let ((,should-unwind-name ,allow-unwind-var))
+           (setq fullframe/previous-window-configuration ,window-config)))
+       (defadvice ,command-off (around fullframe activate)
+         (let ((,window-config fullframe/previous-window-configuration)
+               (,buf (current-buffer)))
            (prog1
                ad-do-it
-             (when ,should-unwind-name
-               ,off-code)))))))
+             (fullframe/maybe-restore-configuration ,window-config)
+             ,(when kill-on-coff `(kill-buffer ,buf))))))))
 
 ;; interactive functions
 ;; - none
