@@ -4,7 +4,7 @@
 
 ;; Author: Tom Regner <tom@goochesa.de>
 ;; Maintainer: Tom Regner <tom@goochesa.de>
-;; Version: 0.0.3
+;; Version: 0.0.4
 ;; Keywords: fullscreen
 
 ;;  This file is NOT part of GNU Emacs
@@ -68,7 +68,9 @@ Advises COMMAND-ON so that the buffer it displays will appear in
 a full-frame window.  The previous window configuration will be
 restored when COMMAND-OFF is executed in that buffer.  If
 KILL-ON-COFF is non-nil, then the buffer will also be killed
-after COMMAND-OFF has completed."
+after COMMAND-OFF has completed.
+
+IGNORED is there for backcompatibillitys sake -- ignore it."
   (when (keywordp kill-on-coff)
     (error "The register parameter for fullframe has been removed"))
   (let* ((window-config (cl-gensym "fullframe-config-"))
