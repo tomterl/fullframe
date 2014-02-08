@@ -74,13 +74,16 @@ IGNORED is there for backcompatibillitys sake -- ignore it."
   (when (keywordp kill-on-coff)
     (error "The register parameter for fullframe has been removed"))
   (let* ((window-config (cl-gensym "fullframe-config-"))
+         (window-config-post (cl-gensym "fullframe-config-post-"))
          (buf (cl-gensym "fullframe-buf-")))
     `(progn
        (defadvice ,command-on (around fullframe activate)
          (let ((,window-config (current-window-configuration)))
            ad-do-it
-           (delete-other-windows)
-           (setq fullframe/previous-window-configuration ,window-config)))
+           (let ((,window-config-post (current-window-configuration)))
+             (delete-other-windows)
+             (unless (equal ,window-config-post (current-window-configuration))
+               (setq fullframe/previous-window-configuration ,window-config)))))
        (defadvice ,command-off (around fullframe activate)
          (let ((,window-config fullframe/previous-window-configuration)
                (,buf (current-buffer)))
