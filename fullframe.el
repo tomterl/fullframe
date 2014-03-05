@@ -61,7 +61,7 @@ Example:
 
 \(fullframe/with-gensym (one two three)
   (progn
-    (let ((,one \"one\")
+    `(let ((,one \"one\")
           (,two \"two\")
           (,three \"three\"))
     (message \"%s:%s:%s\\n\" ,one ,two ,three))\)
