@@ -58,7 +58,10 @@ Takes the list NAMES and defines `cl-gensym' variables in a `let'
   that has BODY as body.
 
 Idea attributed to Peter Seibel where I found it."
-  `(let ,(cl-loop for n in names collect `(,n (cl-gensym)))
+  `(let
+       ,(cl-loop for n in names collect
+                 `(,n (cl-gensym (concat "fullframe/--"
+                                         (symbol-name (quote ,n))))))
      ,@body))
 
 (defun fullframe/maybe-restore-configuration (config)
