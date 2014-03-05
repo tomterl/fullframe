@@ -53,9 +53,28 @@
 ;; internal functions
 
 (defmacro fullframe/with-gensym (names &rest body)
-  "Make code relying on multiple `cl-gensym' calls more readable.
-Takes the list NAMES and defines `cl-gensym' variables in a `let'
+  "Make macros relying on multiple `cl-gensym' calls more readable.
+Takes a list of symbols NAMES and defines `cl-gensym' variables in a `let'
   that has BODY as body.
+
+Example:
+
+\(fullframe/with-gensym (one two three)
+  (progn
+    (let ((,one \"one\")
+          (,two \"two\")
+          (,three \"three\"))
+    (message \"%s:%s:%s\\n\" ,one ,two ,three))\)
+
+Instead of
+
+\(let ((one (cl-gensym \"sym-one\"))
+       (two (cl-gensym \"sym-two\"))
+       (three (cl-gensym \"sym-three\")))
+  `(let ((,one \"one\")
+        (,two \"two\")
+        (,three \"three\"))
+    (message \"%s:%s:%s\\n\" ,one ,two ,three)))
 
 Idea attributed to Peter Seibel where I found it."
   `(let
