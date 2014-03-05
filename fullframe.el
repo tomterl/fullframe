@@ -52,6 +52,15 @@
 
 ;; internal functions
 
+(defmacro fullframe/with-gensym (names &rest body)
+  "Make code relying on multiple `cl-gensym' calls more readable.
+Takes the list NAMES and defines `cl-gensym' variables in a `let'
+  that has BODY as body.
+
+Idea attributed to Peter Seibel where I found it."
+  `(let ,(cl-loop for n in names collect `(,n (cl-gensym)))
+     ,@body))
+
 (defun fullframe/maybe-restore-configuration (config)
   "Restore CONFIG if non-nil."
   (when config
@@ -73,24 +82,23 @@ after COMMAND-OFF has completed.
 IGNORED is there for backcompatibillitys sake -- ignore it."
   (when (keywordp kill-on-coff)
     (error "The register parameter for fullframe has been removed"))
-  (let* ((window-config (cl-gensym "fullframe-config-"))
-         (window-config-post (cl-gensym "fullframe-config-post-"))
-         (buf (cl-gensym "fullframe-buf-")))
-    `(progn
-       (defadvice ,command-on (around fullframe activate)
-         (let ((,window-config (current-window-configuration)))
-           ad-do-it
-           (let ((,window-config-post (current-window-configuration)))
-             (delete-other-windows)
-             (unless (equal ,window-config-post (current-window-configuration))
-               (setq fullframe/previous-window-configuration ,window-config)))))
-       (defadvice ,command-off (around fullframe activate)
-         (let ((,window-config fullframe/previous-window-configuration)
-               (,buf (current-buffer)))
-           (prog1
-               ad-do-it
-             (fullframe/maybe-restore-configuration ,window-config)
-             ,(when kill-on-coff `(kill-buffer ,buf))))))))
+  (fullframe/with-gensym
+   (window-config window-config-post buf)
+   `(progn
+      (defadvice ,command-on (around fullframe activate)
+        (let ((,window-config (current-window-configuration)))
+          ad-do-it
+          (let ((,window-config-post (current-window-configuration)))
+            (delete-other-windows)
+            (unless (equal ,window-config-post (current-window-configuration))
+              (setq fullframe/previous-window-configuration ,window-config)))))
+      (defadvice ,command-off (around fullframe activate)
+        (let ((,window-config fullframe/previous-window-configuration)
+              (,buf (current-buffer)))
+          (prog1
+              ad-do-it
+            (fullframe/maybe-restore-configuration ,window-config)
+            ,(when kill-on-coff `(kill-buffer ,buf))))))))
 
 ;; interactive functions
 ;; - none
