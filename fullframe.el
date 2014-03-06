@@ -54,8 +54,10 @@
 
 (defmacro fullframe/with-gensym (names &rest body)
   "Make macros relying on multiple `cl-gensym' calls more readable.
-Takes a list of symbols NAMES and defines `cl-gensym' variables in a `let'
-  that has BODY as body.
+Takes a list of symbols NAMES and defines `cl-gensym' variables
+  in a `let' that has BODY as body.  The symbol names generated
+  are prefixed with \"fullframe/--\", the variable names are as
+  given in NAMES.
 
 Example:
 
