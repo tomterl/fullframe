@@ -114,7 +114,7 @@ IGNORED is there for backcompatibillitys sake -- ignore it."
           ad-do-it
           (let ((,window-config-post (current-window-configuration)))
             (delete-other-windows)
-            (unless (equal ,window-config-post (current-window-configuration))
+            (unless (eq ,window-config-post (current-window-configuration))
               (setq fullframe/previous-window-configuration ,window-config)))))
       (defadvice ,command-off (around fullframe activate)
         (let ((,window-config fullframe/previous-window-configuration)
