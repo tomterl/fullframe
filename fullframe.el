@@ -51,7 +51,9 @@
 (make-variable-buffer-local 'fullframe/previous-window-configuration)
 
 (defvar fullframe/other-windows-deleted nil
-  "The window configuration to restore.")
+  "Don't overwrite `fullframe/previous-window-configuration' if
+  `command-on` is called more then once without intermediate
+  `command-off' calls.")
 (make-variable-buffer-local 'fullframe/other-windows-deleted)
 
 ;; internal functions
