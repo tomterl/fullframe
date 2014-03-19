@@ -50,6 +50,10 @@
   "The window configuration to restore.")
 (make-variable-buffer-local 'fullframe/previous-window-configuration)
 
+(defvar fullframe/other-windows-deleted nil
+  "The window configuration to restore.")
+(make-variable-buffer-local 'fullframe/other-windows-deleted)
+
 ;; internal functions
 
 (defmacro fullframe/with-gensym (names &rest body)
@@ -105,22 +109,25 @@ IGNORED is there for backcompatibillitys sake -- ignore it."
   (when (keywordp kill-on-coff)
     (error "The register parameter for fullframe has been removed"))
   (fullframe/with-gensym
-   (window-config window-config-post buf)
+   (window-config buf)
    `(progn
       (defadvice ,command-on (around fullframe activate)
         (let ((,window-config (current-window-configuration)))
           ad-do-it
-          (let ((,window-config-post (current-window-configuration)))
-            (delete-other-windows)
-            (unless (eq ,window-config-post (current-window-configuration))
-              (setq fullframe/previous-window-configuration ,window-config)))))
+          (delete-other-windows)
+          (when (not fullframe/other-windows-deleted)
+            (setq fullframe/previous-window-configuration ,window-config))
+          (setq fullframe/other-windows-deleted t)))
       (defadvice ,command-off (around fullframe activate)
         (let ((,window-config fullframe/previous-window-configuration)
               (,buf (current-buffer)))
-          (prog1
+          (progn
+            (with-current-buffer ,buf
+              (setq fullframe/other-windows-deleted nil))
+            (prog1
               ad-do-it
             (fullframe/maybe-restore-configuration ,window-config)
-            ,(when kill-on-coff `(kill-buffer ,buf))))))))
+            ,(when kill-on-coff `(kill-buffer ,buf)))))))))
 
 ;; interactive functions
 ;; - none
