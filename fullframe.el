@@ -79,6 +79,7 @@ Instead of
     (message \"%s:%s:%s\\n\" ,one ,two ,three)))
 
 Idea attributed to Peter Seibel where I found it."
+  (declare (indent defun))
   `(let
        ,(cl-loop for n in names collect
                  `(,n (cl-gensym (concat "fullframe/--"
@@ -106,23 +107,22 @@ after COMMAND-OFF has completed.
 IGNORED is there for backcompatibillitys sake -- ignore it."
   (when (keywordp kill-on-coff)
     (error "The register parameter for fullframe has been removed"))
-  (fullframe/with-gensym
-   (window-config window-config-post buf)
-   `(progn
-      (defadvice ,command-on (around fullframe activate)
-        (let ((,window-config (current-window-configuration)))
-          ad-do-it
-          (let ((,window-config-post (current-window-configuration)))
-            (delete-other-windows)
-            (unless (equal ,window-config-post (current-window-configuration))
-              (setq fullframe/previous-window-configuration ,window-config)))))
-      (defadvice ,command-off (around fullframe activate)
-        (let ((,window-config fullframe/previous-window-configuration)
-              (,buf (current-buffer)))
-          (prog1
-              ad-do-it
-            (fullframe/maybe-restore-configuration ,window-config)
-            ,(when kill-on-coff `(kill-buffer ,buf))))))))
+  (fullframe/with-gensym (window-config window-config-post buf)
+    `(progn
+       (defadvice ,command-on (around fullframe activate)
+         (let ((,window-config (current-window-configuration)))
+           ad-do-it
+           (let ((,window-config-post (current-window-configuration)))
+             (delete-other-windows)
+             (unless (equal ,window-config-post (current-window-configuration))
+               (setq fullframe/previous-window-configuration ,window-config)))))
+       (defadvice ,command-off (around fullframe activate)
+         (let ((,window-config fullframe/previous-window-configuration)
+               (,buf (current-buffer)))
+           (prog1
+               ad-do-it
+             (fullframe/maybe-restore-configuration ,window-config)
+             ,(when kill-on-coff `(kill-buffer ,buf))))))))
 
 ;; interactive functions
 ;; - none
