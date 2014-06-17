@@ -6,6 +6,7 @@
 ;; Maintainer: Tom Regner <tom@goochesa.de>
 ;; Version: 0.1.0
 ;; Keywords: fullscreen
+;; Package-Requires: ((cl-lib "0.5"))
 
 ;;  This file is NOT part of GNU Emacs
 
