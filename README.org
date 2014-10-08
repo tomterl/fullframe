@@ -11,7 +11,7 @@ frame when called:
 
 #+BEGIN_SRC emacs-lisp
   (require 'fullframe)
-  (fullframe magit-status magit-mode-quit-window nil)
+  (fullframe magit-status magit-mode-quit-window)
 #+END_SRC
 
 ** API
@@ -25,7 +25,7 @@ Fullframe exposes one function, =fullframe=
 #+END_SRC
 
 - =enter-command= is the function you want to execute in a single window in the current frame.
-- =exit-command= is the function that is used to end the action.
+- =exit-command= is the name of a function which, when called, should restore the window configuration.
 - =kill-buffer-after-exit-command= can be set to true if
   =exit-comamnd= does not kill the buffer =enter-command= created, and
   you want that buffer gone.
