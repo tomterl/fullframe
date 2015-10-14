@@ -7,7 +7,7 @@ This is a library that package developers can use to provide user
 friendly single window per frame execution of buffer exposing
 commands, as well as to use in personal emacs configurations to attain
 the same goal for packages that don't use =fullframe= or the likes of
-it themself.
+it themselves.
 
 Example: Setup =magit-status= to open in one window in the current
 frame when called:
@@ -30,7 +30,7 @@ Fullframe exposes one function, =fullframe=
 - =enter-command= is the function you want to execute in a single window in the current frame.
 - =exit-command= is the name of a function which, when called, should restore the window configuration.
 - =kill-buffer-after-exit-command= can be set to true if
-  =exit-comamnd= does not kill the buffer =enter-command= created, and
+  =exit-command= does not kill the buffer =enter-command= created, and
   you want that buffer gone.
 
 ** Installation
@@ -42,7 +42,7 @@ then execute the following in emacs:
   M-x package-install<CR> fullframe<CR>
 #+END_SRC
 
-If you use =cask= for your package-managment, make sure you have
+If you use =cask= for your package-management, make sure you have
 =(source 'melpa)= in your =Cask= file and add
 
 #+BEGIN_SRC emacs-lisp
