@@ -35,7 +35,7 @@ Fullframe exposes one function, =fullframe=
 
 ** Installation
 
-=fullframe= is available on [[http://melpa.milkbox.net/#/fullframe][melpa]]. [[http://melpa.milkbox.net/#/getting-started][Add melpa to your package sources]],
+=fullframe= is available on [[http://melpa.org/#/fullframe][melpa]]. [[http://melpa.org/#/getting-started][Add melpa to your package sources]],
 then execute the following in emacs:
 
 #+BEGIN_SRC emacs-lisp
