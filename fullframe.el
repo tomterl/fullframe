@@ -109,7 +109,7 @@ IGNORED is there for backcompatibillitys sake -- ignore it."
   (when (keywordp kill-on-coff)
     (error "The register parameter for fullframe has been removed"))
   (fullframe/with-gensym (window-config window-config-post buf)
-    `(if (version< "24.4")
+    `(if (version< emacs-version "24.4")
          (progn
            (defadvice ,command-on (around fullframe activate)
              (let ((,window-config (current-window-configuration)))
