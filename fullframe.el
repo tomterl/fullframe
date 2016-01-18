@@ -96,7 +96,7 @@ Idea attributed to Peter Seibel where I found it."
 
 ;; API
 ;;;###autoload
-(defmacro fullframe (command-on command-off &optional kill-on-coff ignored)
+(defmacro fullframe (command-on command-off &optional kill-on-coff after-command-on-func)
   "Save window/frame state when executing COMMAND-ON.
 
 Advises COMMAND-ON so that the buffer it displays will appear in
@@ -108,7 +108,9 @@ after COMMAND-OFF has completed.
 This function uses `defadvice' on versions of emacs < 24.4,
 `advice-add' otherwise.
 
-IGNORED is there for backcompatibillitys sake -- ignore it."
+AFTER-COMMAND-ON-FUNC is called after COMMAND-ON was called and
+the window it generated is the only one in in the frame.
+"
   (when (keywordp kill-on-coff)
     (error "The register parameter for fullframe has been removed"))
   (fullframe/with-gensym (window-config window-config-post buf)
@@ -120,7 +122,9 @@ IGNORED is there for backcompatibillitys sake -- ignore it."
                (let ((,window-config-post (current-window-configuration)))
                  (delete-other-windows)
                  (unless (equal ,window-config-post (current-window-configuration))
-                   (setq fullframe/previous-window-configuration ,window-config)))))
+                   (setq fullframe/previous-window-configuration ,window-config))
+                 (if (functionp after-command-on-func)
+                     (funcall after-command-on-func)))))
            (defadvice ,command-off (around fullframe activate)
              (let ((,window-config fullframe/previous-window-configuration)
                    (,buf (current-buffer)))
@@ -135,7 +139,9 @@ IGNORED is there for backcompatibillitys sake -- ignore it."
                                                  (let ((,window-config-post (current-window-configuration)))
                                                    (delete-other-windows)
                                                    (unless (equal ,window-config-post (current-window-configuration))
-                                                     (setq fullframe/previous-window-configuration ,window-config)))))
+                                                     (setq fullframe/previous-window-configuration ,window-config))
+                                                   (if (functionp after-command-on-func)
+                                                       (funcall after-command-on-func)))))
                      '(:name "fullframe-command-on-advice"))
          (advice-add #',command-off :around #'(lambda (orig-fun &rest args)
                                                 (let ((,window-config fullframe/previous-window-configuration)
