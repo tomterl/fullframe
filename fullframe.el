@@ -140,9 +140,10 @@ the window it generated is the only one in in the frame.
                                                    (delete-other-windows)
                                                    (unless (equal ,window-config-post (current-window-configuration))
                                                      (setq fullframe/previous-window-configuration ,window-config))
-                                                   (if (functionp after-command-on-func)
-                                                       (funcall after-command-on-func)))))
-                     '(:name "fullframe-command-on-advice"))
+                                                   (if (functionp #',after-command-on-func)
+                                                       (funcall #',after-command-on-func)
+                                                     (message "Not a function %s" ,after-command-on-func)))))
+                     '((name . "fullframe-command-on-advice")))
          (advice-add #',command-off :around #'(lambda (orig-fun &rest args)
                                                 (let ((,window-config fullframe/previous-window-configuration)
                                                       (,buf (current-buffer)))
@@ -150,7 +151,7 @@ the window it generated is the only one in in the frame.
                                                       (apply orig-fun args)
                                                     (fullframe/maybe-restore-configuration ,window-config)
                                                     ,(when kill-on-coff `(kill-buffer ,buf)))))
-                     '(:name "fullframe-command-off-advice"))))))
+                     '((name . "fullframe-command-off-advice")))))))
 
 ;; interactive functions
 ;; - none
