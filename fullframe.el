@@ -148,24 +148,26 @@ the window it generated is the only one in in the frame.
                  (fullframe/maybe-restore-configuration ,window-config)
                  ,(when kill-on-coff `(kill-buffer ,buf))))))
        (progn
-         (advice-add #',command-on :around #'(lambda (orig-fun &rest args)
-                                               (let ((,window-config (current-window-configuration)))
-                                                 (apply orig-fun args)
-                                                 (let ((,window-config-post (current-window-configuration)))
-                                                   (delete-other-windows)
-                                                   (unless (equal ,window-config-post (current-window-configuration))
-                                                     (setq fullframe/previous-window-configuration ,window-config))
-                                                   (if (functionp #',after-command-on-func)
-                                                       (funcall #',after-command-on-func)
-                                                     (message "Not a function %s" ,after-command-on-func)))))
+         (advice-add #',command-on :around
+                     #'(lambda (orig-fun &rest args)
+                         (let ((,window-config (current-window-configuration)))
+                           (apply orig-fun args)
+                           (let ((,window-config-post (current-window-configuration)))
+                             (delete-other-windows)
+                             (unless (equal ,window-config-post (current-window-configuration))
+                               (setq fullframe/previous-window-configuration ,window-config))
+                             (if (functionp #',after-command-on-func)
+                                 (funcall #',after-command-on-func)
+                               (message "Not a function %s" ,after-command-on-func)))))
                      '((name . "fullframe-command-on-advice")))
-         (advice-add #',command-off :around #'(lambda (orig-fun &rest args)
-                                                (let ((,window-config fullframe/previous-window-configuration)
-                                                      (,buf (current-buffer)))
-                                                  (prog1
-                                                      (apply orig-fun args)
-                                                    (fullframe/maybe-restore-configuration ,window-config)
-                                                    ,(when kill-on-coff `(kill-buffer ,buf)))))
+         (advice-add #',command-off :around
+                     #'(lambda (orig-fun &rest args)
+                         (let ((,window-config fullframe/previous-window-configuration)
+                               (,buf (current-buffer)))
+                           (prog1
+                               (apply orig-fun args)
+                             (fullframe/maybe-restore-configuration ,window-config)
+                             ,(when kill-on-coff `(kill-buffer ,buf)))))
                      '((name . "fullframe-command-off-advice")))))))
 
 ;; interactive functions
