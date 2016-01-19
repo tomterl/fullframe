@@ -106,7 +106,7 @@ KILL-ON-COFF is non-nil, then the buffer will also be killed
 after COMMAND-OFF has completed.
 
 This function uses `defadvice' on versions of emacs < 24.4,
-`advice-add'otherwise.
+`advice-add' otherwise.
 
 IGNORED is there for backcompatibillitys sake -- ignore it."
   (when (keywordp kill-on-coff)
@@ -131,7 +131,7 @@ IGNORED is there for backcompatibillitys sake -- ignore it."
        (progn
          (advice-add #',command-on :around #'(lambda (orig-fun &rest args)
                                                (let ((,window-config (current-window-configuration)))
-                                                 (if (commandp orig-fun t)
+                                                 (if (and (commandp orig-fun t) (called-interactively-p 'any))
                                                      (call-interactively orig-fun)
                                                    (apply orig-fun args))
                                                  (let ((,window-config-post (current-window-configuration)))
@@ -142,7 +142,7 @@ IGNORED is there for backcompatibillitys sake -- ignore it."
                                                 (let ((,window-config fullframe/previous-window-configuration)
                                                       (,buf (current-buffer)))
                                                   (prog1
-                                                      (if (commandp orig-fun t)
+                                                      (if (and (commandp orig-fun t) (called-interactively-p 'any))
                                                           (call-interactively orig-fun)
                                                         (apply orig-fun args))
                                                     (fullframe/maybe-restore-configuration ,window-config)
