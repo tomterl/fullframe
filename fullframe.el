@@ -105,6 +105,9 @@ restored when COMMAND-OFF is executed in that buffer.  If
 KILL-ON-COFF is non-nil, then the buffer will also be killed
 after COMMAND-OFF has completed.
 
+This function uses `defadvice' on versions of emacs < 24.4,
+`advice-add'otherwise.
+
 IGNORED is there for backcompatibillitys sake -- ignore it."
   (when (keywordp kill-on-coff)
     (error "The register parameter for fullframe has been removed"))
