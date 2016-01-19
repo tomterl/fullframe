@@ -55,8 +55,9 @@ This call will show the current buffer and the =rgrep= result only; if the =rgre
 
 ** Installation
 
-=fullframe= is available on [[http://melpa.org/#/fullframe][melpa]]. [[http://melpa.org/#/getting-started][Add melpa to your package sources]],
-then execute the following in emacs:
+=fullframe= is available on [[http://melpa.org/#/fullframe][melpa]] and [[http://stable.melpa.org][melpa-stable]].
+
+[[http://melpa.org/#/getting-started][Add melpa to your package sources]], then execute the following in emacs:
 
 #+BEGIN_SRC emacs-lisp
   M-x package-install<CR> fullframe<CR>
