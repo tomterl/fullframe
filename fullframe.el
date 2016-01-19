@@ -135,14 +135,16 @@ IGNORED is there for backcompatibillitys sake -- ignore it."
                                                  (let ((,window-config-post (current-window-configuration)))
                                                    (delete-other-windows)
                                                    (unless (equal ,window-config-post (current-window-configuration))
-                                                     (setq fullframe/previous-window-configuration ,window-config))))))
+                                                     (setq fullframe/previous-window-configuration ,window-config)))))
+                     '(:name "fullframe-command-on-advice"))
          (advice-add #',command-off :around #'(lambda (orig-fun &rest args)
                                                 (let ((,window-config fullframe/previous-window-configuration)
                                                       (,buf (current-buffer)))
                                                   (prog1
                                                       (apply orig-fun args)
                                                     (fullframe/maybe-restore-configuration ,window-config)
-                                                    ,(when kill-on-coff `(kill-buffer ,buf))))))))))
+                                                    ,(when kill-on-coff `(kill-buffer ,buf)))))
+                     '(:name "fullframe-command-off-advice"))))))
 
 ;; interactive functions
 ;; - none
