@@ -4,7 +4,7 @@
 
 ;; Author: Tom Regner <tom@goochesa.de>
 ;; Maintainer: Tom Regner <tom@goochesa.de>
-;; Version: 0.2.2
+;; Version: 0.3.0
 ;; Keywords: fullscreen
 ;; Package-Requires: ((cl-lib "0.5"))
 
@@ -95,6 +95,21 @@ Idea attributed to Peter Seibel where I found it."
       (error (message "Failed to restore all windows.")))))
 
 ;; API
+;;;###autoload
+(defun fullframe/current-buffer-window-config ()
+  "Return the window-configuration stored for the current buffer."
+  fullframe/previous-window-configuration)
+
+;;;###autoload
+(defun fullframe/erase-current-buffer-window-config ()
+  "Forget the window config associated with the current buffer."
+  (setq fullframe/previous-window-configuration nil))
+
+;;;###autoload
+(defun fullframe/set-current-buffer-window-config (wconf)
+  "Associate the current buffer with the window-configuration WCONF."
+  (setq fullframe/previous-window-configuration wconf))
+
 ;;;###autoload
 (defmacro fullframe (command-on command-off &optional kill-on-coff after-command-on-func)
   "Save window/frame state when executing COMMAND-ON.
