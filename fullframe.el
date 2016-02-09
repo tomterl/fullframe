@@ -113,6 +113,27 @@ Idea attributed to Peter Seibel where I found it."
   (setq fullframe/previous-window-configuration wconf))
 
 ;;;###autoload
+(defmacro fullframe/split-screen (command-on command-off second-buffer &optional direction  switch-to-second-buffer size)
+  "After COMMAND-ON is executed and only one window present in
+  the current frame, split the frame in two windows ('below or
+  'right, depending on DIRECTION being `horizontal' or
+  `vertical') and switch the new window to the buffer
+  SECOND-BUFFER (name or symbol). If SWITCH-TO-SECOND-BUFFER is
+  not `nil', the window holding SECOND-BUFFER will be activated.
+"
+  `(fullframe ,command-on
+             ,command-off
+             nil
+             (lambda ()
+               (let ((wconf (fullframe/current-buffer-window-config))
+                   (new-window (if (eq 'horizontal ,direction)(split-window-right)(split-window-below))))
+                 (set-window-buffer new-window ,second-buffer)
+                 (fullframe/erase-current-buffer-window-config)
+                 (if ,switch-to-second-buffer (select-window new-window))
+               (with-current-buffer ,second-buffer
+                 (fullframe/set-current-buffer-window-config wconf))))))
+
+;;;###autoload
 (defmacro fullframe (command-on command-off &optional kill-on-coff after-command-on-func)
   "Save window/frame state when executing COMMAND-ON.
 
