@@ -41,7 +41,9 @@
 ;;
 ;;; Code:
 
-(require 'cl-lib)
+
+(eval-when-compile
+  (require 'cl))
 
 ;; customization
 ;; - none
