@@ -138,8 +138,8 @@ the window it generated is the only one in in the frame.
           (off-code `(progn
                        (fullframe/maybe-restore-configuration ,window-config)
                        ,@(when kill-on-coff (list `(kill-buffer ,buf))))))
-      `(if (version< emacs-version "24.4")
-           (progn
+      (if (version< emacs-version "24.4")
+          `(progn
              (defadvice ,command-on (around fullframe activate)
                (let ((,window-config (current-window-configuration)))
                  ad-do-it
@@ -150,7 +150,7 @@ the window it generated is the only one in in the frame.
                  (prog1
                      ad-do-it
                    ,off-code))))
-         (progn
+        `(progn
            (advice-add #',command-on :around
                        #'(lambda (orig-fun &rest args)
                            (let ((,window-config (current-window-configuration)))
