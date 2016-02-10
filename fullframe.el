@@ -129,46 +129,42 @@ the window it generated is the only one in in the frame.
   (when (keywordp kill-on-coff)
     (error "The register parameter for fullframe has been removed"))
   (fullframe/with-gensym (window-config window-config-post buf)
-    `(if (version< emacs-version "24.4")
+    (let ((on-code `(let ((,window-config-post (current-window-configuration)))
+                      (delete-other-windows)
+                      (unless (equal ,window-config-post (current-window-configuration))
+                        (setq fullframe/previous-window-configuration ,window-config))
+                      ,@(when after-command-on-func
+                          (list `(funcall #',after-command-on-func)))))
+          (off-code `(progn
+                       (fullframe/maybe-restore-configuration ,window-config)
+                       ,@(when kill-on-coff (list `(kill-buffer ,buf))))))
+      `(if (version< emacs-version "24.4")
+           (progn
+             (defadvice ,command-on (around fullframe activate)
+               (let ((,window-config (current-window-configuration)))
+                 ad-do-it
+                 ,on-code))
+             (defadvice ,command-off (around fullframe activate)
+               (let ((,window-config fullframe/previous-window-configuration)
+                     (,buf (current-buffer)))
+                 (prog1
+                     ad-do-it
+                   ,off-code))))
          (progn
-           (defadvice ,command-on (around fullframe activate)
-             (let ((,window-config (current-window-configuration)))
-               ad-do-it
-               (let ((,window-config-post (current-window-configuration)))
-                 (delete-other-windows)
-                 (unless (equal ,window-config-post (current-window-configuration))
-                   (setq fullframe/previous-window-configuration ,window-config))
-                 (if (functionp after-command-on-func)
-                     (funcall after-command-on-func)))))
-           (defadvice ,command-off (around fullframe activate)
-             (let ((,window-config fullframe/previous-window-configuration)
-                   (,buf (current-buffer)))
-               (prog1
-                   ad-do-it
-                 (fullframe/maybe-restore-configuration ,window-config)
-                 ,(when kill-on-coff `(kill-buffer ,buf))))))
-       (progn
-         (advice-add #',command-on :around
-                     #'(lambda (orig-fun &rest args)
-                         (let ((,window-config (current-window-configuration)))
-                           (apply orig-fun args)
-                           (let ((,window-config-post (current-window-configuration)))
-                             (delete-other-windows)
-                             (unless (equal ,window-config-post (current-window-configuration))
-                               (setq fullframe/previous-window-configuration ,window-config))
-                             (if (functionp #',after-command-on-func)
-                                 (funcall #',after-command-on-func)
-                               (message "Not a function %s" ,after-command-on-func)))))
-                     '((name . "fullframe-command-on-advice")))
-         (advice-add #',command-off :around
-                     #'(lambda (orig-fun &rest args)
-                         (let ((,window-config fullframe/previous-window-configuration)
-                               (,buf (current-buffer)))
-                           (prog1
-                               (apply orig-fun args)
-                             (fullframe/maybe-restore-configuration ,window-config)
-                             ,(when kill-on-coff `(kill-buffer ,buf)))))
-                     '((name . "fullframe-command-off-advice")))))))
+           (advice-add #',command-on :around
+                       #'(lambda (orig-fun &rest args)
+                           (let ((,window-config (current-window-configuration)))
+                             (apply orig-fun args)
+                             ,on-code))
+                       '((name . "fullframe-command-on-advice")))
+           (advice-add #',command-off :around
+                       #'(lambda (orig-fun &rest args)
+                           (let ((,window-config fullframe/previous-window-configuration)
+                                 (,buf (current-buffer)))
+                             (prog1
+                                 (apply orig-fun args)
+                               ,off-code)))
+                       '((name . "fullframe-command-off-advice"))))))))
 
 ;; interactive functions
 ;; - none
