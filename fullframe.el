@@ -162,6 +162,7 @@ the window it generated is the only one in in the frame.
                        ,@(when kill-on-coff (list `(kill-buffer ,buf))))))
       (if (version< emacs-version "24.4")
           `(progn
+             (require 'fullframe)
              (defadvice ,command-on (around fullframe activate)
                (let ((,window-config (current-window-configuration)))
                  ad-do-it
@@ -173,6 +174,7 @@ the window it generated is the only one in in the frame.
                      ad-do-it
                    ,off-code))))
         `(progn
+           (require 'fullframe)
            (advice-add #',command-on :around
                        #'(lambda (orig-fun &rest args)
                            (let ((,window-config (current-window-configuration)))
