@@ -121,16 +121,16 @@ Idea attributed to Peter Seibel where I found it."
   not `nil', the window holding SECOND-BUFFER will be activated.
 "
   `(fullframe ,command-on
-             ,command-off
-             nil
-             (lambda ()
-               (let ((wconf (fullframe/current-buffer-window-config))
-                   (new-window (if (eq 'horizontal ,direction)(split-window-right)(split-window-below))))
-                 (set-window-buffer new-window ,second-buffer)
-                 (fullframe/erase-current-buffer-window-config)
-                 (if ,switch-to-second-buffer (select-window new-window))
-               (with-current-buffer ,second-buffer
-                 (fullframe/set-current-buffer-window-config wconf))))))
+              ,command-off
+              nil
+              (lambda ()
+                (let ((wconf (fullframe/current-buffer-window-config))
+                      (new-window (if (eq 'horizontal ,direction)(split-window-right)(split-window-below))))
+                  (set-window-buffer new-window ,second-buffer)
+                  (fullframe/erase-current-buffer-window-config)
+                  (if ,switch-to-second-buffer (select-window new-window))
+                  (with-current-buffer ,second-buffer
+                    (fullframe/set-current-buffer-window-config wconf))))))
 
 ;;;###autoload
 (defmacro fullframe (command-on command-off &optional kill-on-coff after-command-on-func)
