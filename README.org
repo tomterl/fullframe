@@ -84,3 +84,4 @@ You have to possibilities:
 - Pass a list of all possible exit-commands to ~fullframe~
 - Revise the customization list ~fullframe/generic-quit-commands~ and
   set ~fullframe/advice-generic-quit-commands~ to ~t~.
+- mix both 
