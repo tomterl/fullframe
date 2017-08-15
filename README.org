@@ -1,6 +1,6 @@
 * Generalized automatic execution in a single frame
 
-[[file:http:/stable.melpa.org/packages/fullframe-badge.svg]]
+[[file:http://stable.melpa.org/packages/fullframe-badge.svg]]
 [[http://melpa.org/#/fullframe][file:http://melpa.org/packages/fullframe-badge.svg]]
 
 This is a library that package developers can use to provide user
