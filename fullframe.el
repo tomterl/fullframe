@@ -4,7 +4,7 @@
 
 ;; Author: Tom Regner <tom@goochesa.de>
 ;; Maintainer: Tom Regner <tom@goochesa.de>
-;; Version: 0.4.0
+;; Version: 0.4.9
 ;; Keywords: fullscreen
 ;; Package-Requires: ((cl-lib "0.5"))
 
@@ -45,7 +45,23 @@
 (require 'cl-lib)
 
 ;; customization
-;; - none
+;; 
+
+(defcustom fullframe/advice-generic-quit-commands nil
+  "If set to a non-nil value, on each call to fullframe ALL
+functions in `fullframe/generic-exit-frame-commands' will be
+adviced to restore the previous window configuration, not only
+the one given as `exit-cmd' to the fullframe-call.
+
+The default value is `nil'."
+  :type '(boolean)
+  :group 'fullframe)
+
+(defcustom fullframe/generic-quit-commands
+  '(kill-this-buffer kill-current-buffer kill-buffer-and-window kill-other-buffer-and-window bury-buffer)
+  "List of functions that will adviced in addition to `command-off', iff `fullframe/advice-generic-quit-commands' is not `nil'"
+  :type '(set :value-type function)
+  :group 'fullframe)
 
 ;; variables
 (defvar fullframe/previous-window-configuration nil
@@ -159,7 +175,9 @@ the window it generated is the only one in in the frame.
                           (list `(funcall #',after-command-on-func)))))
           (off-code `(progn
                        (fullframe/maybe-restore-configuration ,window-config)
-                       ,@(when kill-on-coff (list `(kill-buffer ,buf))))))
+                       ,@(when kill-on-coff (list `(kill-buffer ,buf)))))
+          (exit-cmds `(append (if fullframe/advice-generic-quit-commands fullframe/generic-quit-commands nil)
+                              (if (and (not (functionp ',command-off)) (listp ',command-off)) ',command-off (list ',command-off)))))
       (if (version< emacs-version "24.4")
           `(progn
              (require 'fullframe)
@@ -167,12 +185,13 @@ the window it generated is the only one in in the frame.
                (let ((,window-config (current-window-configuration)))
                  ad-do-it
                  ,on-code))
-             (defadvice ,command-off (around fullframe activate)
-               (let ((,window-config fullframe/previous-window-configuration)
-                     (,buf (current-buffer)))
-                 (prog1
-                     ad-do-it
-                   ,off-code))))
+             (dolist (coff ,exit-cmds)
+               (defadvice coff (around fullframe activate)
+                 (let ((,window-config fullframe/previous-window-configuration)
+                       (,buf (current-buffer)))
+                   (prog1
+                       ad-do-it
+                     ,off-code)))))
         `(progn
            (require 'fullframe)
            (advice-add #',command-on :around
@@ -181,14 +200,16 @@ the window it generated is the only one in in the frame.
                              (apply orig-fun args)
                              ,on-code))
                        '((name . "fullframe-command-on-advice")))
-           (advice-add #',command-off :around
-                       #'(lambda (orig-fun &rest args)
-                           (let ((,window-config fullframe/previous-window-configuration)
-                                 (,buf (current-buffer)))
-                             (prog1
-                                 (apply orig-fun args)
-                               ,off-code)))
-                       '((name . "fullframe-command-off-advice"))))))))
+           (dolist (coff ,exit-cmds)
+             (progn
+               (advice-add coff :around
+                           #'(lambda (orig-fun &rest args)
+                               (let ((,window-config fullframe/previous-window-configuration)
+                                     (,buf (current-buffer)))
+                                 (prog1
+                                     (apply orig-fun args)
+                                   ,off-code)))
+                           '((name . "fullframe-command-off-advice"))))))))))
 
 ;; interactive functions
 ;; - none

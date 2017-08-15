@@ -71,3 +71,16 @@ If you use =cask= for your package-management, make sure you have
 #+END_SRC 
 
 to it.
+** Configuration
+
+The simple usage does not need configuration.  
+
+If you want to fullframe functions, but your workflow makes you use
+multiple commands to exit the buffer in question, you don't have to
+use multiple calls to ~fullframe~.
+
+You have to possibilities:
+
+- Pass a list of all possible exit-commands to ~fullframe~
+- Revise the customization list ~fullframe/generic-quit-commands~ and
+  set ~fullframe/advice-generic-quit-commands~ to ~t~.
