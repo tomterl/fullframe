@@ -1,3 +1,5 @@
+Development takes now place at sourcehut: https://sr.ht/~tomterl/tomtel/ .
+
 * Generalized automatic execution in a single frame
 
 [[https://stable.melpa.org/#/fullframe][file:http://stable.melpa.org/packages/fullframe-badge.svg]]
